@@ -18,24 +18,38 @@ public final class CodableCacheStore: CacheStore {
     }
     
     public func delete(with id: String, completion: @escaping (Result<Void, CacheStoreError>) -> Void) {
-        concurrentQueue.async(flags: .barrier) { [weak self] in
-            guard let self else { return }
+        self.concurrentQueue.async(flags: .barrier) {
             self.cache.removeValue(forKey: id)
-            self.saveCache(completion: completion)
+            self.saveCache { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(()):
+                    self.loadCache(completion: completion)
+                default:
+                    return
+                }
+            }
         }
     }
     
     public func insert(with id: String, data: Data, completion: @escaping (Result<Void, CacheStoreError>) -> Void) {
-        concurrentQueue.async(flags: .barrier) { [weak self] in
-            guard let self else { return }
+        self.concurrentQueue.async(flags: .barrier) {
             self.cache[id] = data
-            self.saveCache(completion: completion)
+            self.saveCache { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(()):
+                    self.loadCache(completion: completion)
+                default:
+                    return
+                }
+            }
         }
     }
     
     public func retrieve(with id: String, completion: @escaping (Result<Data, CacheStoreError>) -> Void) {
-        concurrentQueue.sync {
-            guard let data = cache[id] else {
+        self.concurrentQueue.sync {
+            guard let data = self.cache[id] else {
                 completion(.failure(.failureRetrival))
                 return
             }
