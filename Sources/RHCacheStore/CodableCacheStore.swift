@@ -14,6 +14,7 @@ public final class CodableCacheStore: CacheStore {
     let storeURL: URL
     public init(storeURL: URL) {
         self.storeURL = storeURL
+        loadCache { _ in }
     }
     
     public func delete(with id: String, completion: @escaping (Result<Void, CacheStoreError>) -> Void) {
