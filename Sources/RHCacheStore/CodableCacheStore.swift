@@ -48,7 +48,8 @@ public final class CodableCacheStore: CacheStore {
     }
     
     public func retrieve(with id: String, completion: @escaping (Result<Data, CacheStoreError>) -> Void) {
-        self.concurrentQueue.sync {
+        concurrentQueue.sync { [weak self] in
+            guard let self else { return }
             guard let data = self.cache[id] else {
                 completion(.failure(.failureRetrival))
                 return
@@ -64,8 +65,8 @@ extension CodableCacheStore: CacheStorePrivateHelpers {
         concurrentQueue.async(flags: .barrier) { [weak self] in
             guard let self else { return }
             do {
-                let data = try JSONSerialization.data(withJSONObject: cache, options: [])
-                try data.write(to: storeURL)
+                let data = try JSONSerialization.data(withJSONObject: self.cache, options: [])
+                try data.write(to: self.storeURL)
                 completion(.success(()))
             } catch {
                 completion(.failure(.failureSaveCache))
