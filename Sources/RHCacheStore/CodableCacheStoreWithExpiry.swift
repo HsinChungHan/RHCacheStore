@@ -7,18 +7,18 @@
 
 import Foundation
 
-class CodableCacheStoreWithExpiry: CacheStore {
+public class CodableCacheStoreWithExpiry: CacheStore {
     private(set) var expiryDates: [String: Date] = [:]
     
     let expiryTimeInterval: TimeInterval
     let storeURL: URL
-    init(expiryTimeInterval: TimeInterval, storeURL: URL) {
+    public init(expiryTimeInterval: TimeInterval, storeURL: URL) {
         self.expiryTimeInterval = expiryTimeInterval
         self.storeURL = storeURL
         loadCache { _ in }
     }
     
-    func delete(with id: String, completion: @escaping (Result<Void, CacheStoreError>) -> Void) {
+    public func delete(with id: String, completion: @escaping (Result<Void, CacheStoreError>) -> Void) {
         expiryDates.removeValue(forKey: id)
         saveCache { [weak self] result in
             guard let self else { return }
@@ -31,7 +31,7 @@ class CodableCacheStoreWithExpiry: CacheStore {
         }
     }
     
-    func insert(with id: String, data: Data, completion: @escaping (Result<Void, CacheStoreError>) -> Void) {
+    public func insert(with id: String, data: Data, completion: @escaping (Result<Void, CacheStoreError>) -> Void) {
         expiryDates[id] = Date().addingTimeInterval(expiryTimeInterval)
         saveCache { [weak self] result in
             guard let self else { return }
@@ -44,7 +44,7 @@ class CodableCacheStoreWithExpiry: CacheStore {
         }
     }
     
-    func retrieve(with id: String, completion: @escaping (Result<Data, CacheStoreError>) -> Void) {
+    public func retrieve(with id: String, completion: @escaping (Result<Data, CacheStoreError>) -> Void) {
         guard
             let expiryDate = expiryDates[id],
             Date() <= expiryDate
