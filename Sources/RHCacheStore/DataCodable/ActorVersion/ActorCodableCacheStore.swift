@@ -13,13 +13,6 @@ public actor ActorCodableCacheStore: ActorCacheStore {
 
     public init(storeURL: URL) {
         self.storeURL = storeURL
-        Task {
-            do {
-                try await loadCache()
-            } catch {
-                print("🛑 Failed to load cache in the beginning!")
-            }
-        }
     }
     
     public func delete(with id: String) async throws {
@@ -46,11 +39,8 @@ public actor ActorCodableCacheStore: ActorCacheStore {
         }
         return .found(json)
     }
-}
-
-// MARK: - Helpers
-extension ActorCodableCacheStore: ActorCacheStorePrivateHelpers {
-    func saveCache() async throws {
+    
+    public func saveCache() async throws {
         do {
             let data = try JSONSerialization.data(withJSONObject: cache, options: [])
             try data.write(to: storeURL)
@@ -59,7 +49,7 @@ extension ActorCodableCacheStore: ActorCacheStorePrivateHelpers {
         }
     }
     
-    func loadCache() async throws {
+    public func loadCache() async throws {
         do {
             let data = try Data(contentsOf: storeURL)
             let decodedCache = try JSONSerialization.jsonObject(with: data, options: [])

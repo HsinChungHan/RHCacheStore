@@ -57,11 +57,8 @@ public actor ActorCodableCacheStoreWithExpiry: ActorCacheStore {
         }
         return await codableCacheStore.retrieve(with: id)
     }
-}
-
-// MARK: - ActorCacheStorePrivateHelpers
-extension ActorCodableCacheStoreWithExpiry: ActorCacheStorePrivateHelpers {
-    func saveCache() async throws {
+    
+    public func saveCache() async throws {
         do {
             let data = try JSONEncoder().encode(expiryDates)
             try data.write(to: expiryDatesStoreURL)
@@ -70,7 +67,7 @@ extension ActorCodableCacheStoreWithExpiry: ActorCacheStorePrivateHelpers {
         }
     }
     
-    func loadCache() async throws {
+    public func loadCache() async throws {
         do {
             let data = try Data(contentsOf: expiryDatesStoreURL)
             self.expiryDates = try JSONDecoder().decode([String: Date].self, from: data)
