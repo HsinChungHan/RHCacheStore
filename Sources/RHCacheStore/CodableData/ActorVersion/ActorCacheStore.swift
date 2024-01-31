@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 public protocol ActorCacheStore {
     func delete(with id: String) async throws
     func insert(with id: String, json: Any) async throws

@@ -11,7 +11,7 @@ public actor ActorCodableCacheStore: ActorCacheStore {
     private var cache: [String: Any] = [:]
     private let storeURL: URL
 
-    var isCacheLoad = false
+    private var isCacheLoad = false
     public init(storeURL: URL) {
         self.storeURL = storeURL
     }
