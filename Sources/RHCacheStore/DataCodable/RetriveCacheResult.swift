@@ -10,4 +10,5 @@ import Foundation
 public enum RetriveCacheResult {
     case empty
     case found(Any)
+    case failure(Error)
 }

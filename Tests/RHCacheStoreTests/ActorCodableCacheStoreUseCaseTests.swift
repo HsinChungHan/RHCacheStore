@@ -22,13 +22,13 @@ class ActorCodableCacheStoreUseCaseTests: XCTestCase {
     // MARK: - Retrieve
     func test_retrieve_deliversEmptyOnEmptyCache() async {
         let sut = makeSUT()
-        await retrivalExpect(sut, with: anyID, retrieve: .empty)
+        await retrivalExpect(sut, with: anyID, retrieve: .failure(CacheStoreError.failureLoadCache))
     }
     
     func test_retrieve_hasNoSideEffectsOnEmptyCache() async {
         let sut = makeSUT()
-        await retrivalExpect(sut, with: anyID, retrieve: .empty)
-        await retrivalExpect(sut, with: anyID, retrieve: .empty)
+        await retrivalExpect(sut, with: anyID, retrieve: .failure(CacheStoreError.failureLoadCache))
+        await retrivalExpect(sut, with: anyID, retrieve: .failure(CacheStoreError.failureLoadCache))
     }
     
     func test_retrieve_deliversInsertedDataOnNonEmptyCache() async {
@@ -164,6 +164,8 @@ private extension ActorCodableCacheStoreUseCaseTests {
         let result = await sut.retrieve(with: id)
         switch (result, expectedResult) {
         case (.empty, .empty):
+            break
+        case (.failure(_), .failure(_)):
             break
         case let (.found(json), .found(expectedJson)):
             XCTAssertEqual(json as? [String: Double], expectedJson as? [String: Double], file: file, line: line)

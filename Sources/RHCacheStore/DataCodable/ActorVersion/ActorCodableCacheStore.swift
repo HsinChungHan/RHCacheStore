@@ -11,6 +11,7 @@ public actor ActorCodableCacheStore: ActorCacheStore {
     private var cache: [String: Any] = [:]
     private let storeURL: URL
 
+    var isCacheLoad = false
     public init(storeURL: URL) {
         self.storeURL = storeURL
     }
@@ -34,6 +35,14 @@ public actor ActorCodableCacheStore: ActorCacheStore {
     }
     
     public func retrieve(with id: String) async -> RetriveCacheResult {
+        if !isCacheLoad {
+            do {
+                try await loadCache()
+            } catch let error {
+                return .failure(error)
+            }
+        }
+        
         guard let json = cache[id] else {
             return .empty
         }
@@ -55,6 +64,7 @@ public actor ActorCodableCacheStore: ActorCacheStore {
             let decodedCache = try JSONSerialization.jsonObject(with: data, options: [])
             if let cache = decodedCache as? [String: Any] {
                 self.cache = cache
+                isCacheLoad = true
             }
         } catch {
             throw CacheStoreError.failureLoadCache
