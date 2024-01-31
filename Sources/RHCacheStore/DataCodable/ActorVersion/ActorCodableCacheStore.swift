@@ -63,7 +63,7 @@ extension ActorCodableCacheStore: ActorCacheStorePrivateHelpers {
         do {
             let data = try Data(contentsOf: storeURL)
             let decodedCache = try JSONSerialization.jsonObject(with: data, options: [])
-            if let cache = decodedCache as? [String: Data] {
+            if let cache = decodedCache as? [String: Any] {
                 self.cache = cache
             }
         } catch {
