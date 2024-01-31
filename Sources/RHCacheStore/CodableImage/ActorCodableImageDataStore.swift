@@ -7,7 +7,7 @@
 
 import Foundation
 
-public actor ActorCodableUIImageStore: ActorImageDataCacheStore {
+public actor ActorCodableImageStore: ActorImageDataCacheStore {
     private var isCacheLoad = false
     private let storeURL: URL
     private var cache: [String: URL] = [:]
@@ -72,7 +72,7 @@ public actor ActorCodableUIImageStore: ActorImageDataCacheStore {
     }
 }
 
-private extension ActorCodableUIImageStore {
+private extension ActorCodableImageStore {
     func makeImageFileURL(with id: String) -> URL {
         storeURL.appendingPathComponent(id)
     }
