@@ -7,14 +7,6 @@
 
 import Foundation
 
-public enum CacheStoreError: Error {
-    case failureDeletion
-    case failureInsertion
-    case failureRetrival
-    case failureSaveCache
-    case failureLoadCache
-}
-
 public protocol CacheStore {
     func delete(with id: String, completion: @escaping (Result<Void, CacheStoreError>) -> Void)
     func insert(with id: String, data: Data, completion: @escaping (Result<Void, CacheStoreError>) -> Void)
