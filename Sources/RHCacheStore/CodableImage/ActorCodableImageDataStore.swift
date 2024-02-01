@@ -78,6 +78,6 @@ private extension ActorCodableImageStore {
     }
     
     var imageURLsFileURL: URL {
-        storeURL.appendingPathComponent("imageCacheIndex.json")
+        storeURL.appendingPathComponent("imageCacheIndex.store")
     }
 }
