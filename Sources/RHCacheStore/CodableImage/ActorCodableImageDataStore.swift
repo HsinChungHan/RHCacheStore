@@ -21,6 +21,11 @@ public actor ActorCodableImageStore: ActorImageDataCacheStore {
         do {
             try imageData.write(to: fileURL)
             cache[id] = fileURL
+            do {
+                try await saveCache()
+            } catch {
+                throw CacheStoreError.failureInsertion
+            }
         } catch {
             throw CacheStoreError.failureInsertion
         }
@@ -48,6 +53,11 @@ public actor ActorCodableImageStore: ActorImageDataCacheStore {
         do {
             try FileManager.default.removeItem(at: fileURL)
             cache.removeValue(forKey: id)
+            do {
+                try await saveCache()
+            } catch {
+                throw CacheStoreError.failureDeletion
+            }
         } catch {
             throw CacheStoreError.failureDeletion
         }
