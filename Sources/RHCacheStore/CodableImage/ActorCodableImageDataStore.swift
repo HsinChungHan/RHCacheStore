@@ -76,6 +76,7 @@ public actor ActorCodableImageStore: ActorImageDataCacheStore {
         do {
             let data = try Data(contentsOf: imageURLsFileURL)
             cache = try JSONDecoder().decode([String: URL].self, from: data)
+            isCacheLoad = true
         } catch {
             throw CacheStoreError.failureLoadCache
         }
