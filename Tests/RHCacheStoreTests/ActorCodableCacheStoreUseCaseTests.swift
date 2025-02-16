@@ -22,14 +22,16 @@ class ActorCodableCacheStoreUseCaseTests: XCTestCase {
     // MARK: - Retrieve
     func test_retrieve_deliversEmptyOnEmptyCache() async {
         let sut = makeSUT()
-        await retrivalExpect(sut, with: anyID, retrieve: .failure(CacheStoreError.failureLoadCache))
+        await retrivalExpect(sut, with: anyID, retrieve: .empty)
     }
+
     
     func test_retrieve_hasNoSideEffectsOnEmptyCache() async {
         let sut = makeSUT()
-        await retrivalExpect(sut, with: anyID, retrieve: .failure(CacheStoreError.failureLoadCache))
-        await retrivalExpect(sut, with: anyID, retrieve: .failure(CacheStoreError.failureLoadCache))
+        await retrivalExpect(sut, with: anyID, retrieve: .empty)
+        await retrivalExpect(sut, with: anyID, retrieve: .empty)
     }
+
     
     func test_retrieve_deliversInsertedDataOnNonEmptyCache() async {
         let sut = makeSUT()

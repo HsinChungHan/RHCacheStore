@@ -62,12 +62,27 @@ public actor ActorCodableCacheStore: ActorCacheStore {
         do {
             let data = try Data(contentsOf: storeURL)
             let decodedCache = try JSONSerialization.jsonObject(with: data, options: [])
+
             if let cache = decodedCache as? [String: Any] {
                 self.cache = cache
                 isCacheLoad = true
             }
-        } catch {
-            throw CacheStoreError.failureLoadCache
+        } catch let error as NSError {
+            if error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError {
+                // Create a new file if it's not existed
+                try createEmptyCacheFile()
+                self.cache = [:]
+                isCacheLoad = true
+            } else if error.domain == NSCocoaErrorDomain && error.code == NSFileReadCorruptFileError {
+                throw CacheStoreError.corruptFile
+            } else {
+                throw CacheStoreError.failureLoadCache
+            }
         }
+    }
+
+    private func createEmptyCacheFile() throws {
+        let emptyData = "{}".data(using: .utf8) ?? Data()
+        try emptyData.write(to: storeURL, options: .atomic)
     }
 }

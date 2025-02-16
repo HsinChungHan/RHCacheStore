@@ -13,4 +13,5 @@ public enum CacheStoreError: Error {
     case failureRetrival
     case failureSaveCache
     case failureLoadCache
+    case corruptFile
 }
